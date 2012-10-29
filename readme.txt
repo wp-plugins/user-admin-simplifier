@@ -32,7 +32,7 @@ Nothing yet.
 
 == Screenshots ==
 1. Choose a user to edit their menus
-2. Check the menu sectiond to disable. Click 'Save Changes' to apply your settings.
+2. Check the menu section to disable. Click 'Save Changes' to apply your settings.
  
 == Changelog ==
 
