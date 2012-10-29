@@ -1,7 +1,7 @@
 === User Admin Simplifier ===
 Contributors: adamsilverstein
 Donate link:  
-Tags: admin
+Tags: admin simplify 
 Requires at least: 3.0.1
 Tested up to: 3.4
 Stable tag: 0.23
@@ -23,7 +23,7 @@ Note: while you can simplify your own admin menu, the plugin does not let you re
 
 == Frequently Asked Questions ==
 
-=What questions do you have?=
+= What questions do you have? =
 
 None so far.
 
