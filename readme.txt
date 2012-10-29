@@ -20,13 +20,15 @@ Install User Admin Simplifier either via the WordPress.org plugin directory, or 
 That’s it. You’re ready to go!
 
 == Frequently Asked Questions ==
+
 What questions do you have?
+
 None so far.
 
-== Upgrade Notice == section was found
+== Upgrade Notice ==
 Nothing yet.
 
-== Screenshots == section was found
+== Screenshots ==
 Coming soon.
  
 == Changelog ==
