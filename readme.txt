@@ -19,6 +19,8 @@ Lets any Administrator simplify the WordPress Admin interface, on a per-user bas
 Install User Admin Simplifier either via the WordPress.org plugin directory, or by uploading the files to your server
 That’s it. You’re ready to go!
 
+Note: while you can simplify your own admin menu, the plugin does not let you remove its own menu for yourself. this prevents the possibility of locking yourself out entirely.
+
 == Frequently Asked Questions ==
 
 =What questions do you have?=
@@ -29,7 +31,8 @@ None so far.
 Nothing yet.
 
 == Screenshots ==
-Coming soon.
+1. Choose a user to edit their menus
+2. Check the menu sectiond to disable. Click 'Save Changes' to apply your settings.
  
 == Changelog ==
 
