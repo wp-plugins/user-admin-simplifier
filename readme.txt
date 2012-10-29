@@ -21,7 +21,7 @@ That’s it. You’re ready to go!
 
 == Frequently Asked Questions ==
 
-What questions do you have?
+=What questions do you have?=
 
 None so far.
 
