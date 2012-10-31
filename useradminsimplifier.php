@@ -3,8 +3,8 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier.php
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu sections off.
-Version: 0.23
-Author: Earthbound
+Version: 0.3
+Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
 */
@@ -13,17 +13,17 @@ License: GPLv2 or later
  	
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
-		add_action( 'admin_menu', 'add_admin_menu' );
-  		add_action( 'admin_menu', 'edit_admin_menus' );  	
-        add_action( 'admin_head', 'admin_js' );
-        add_action( 'admin_head', 'admin_css' );
+		add_action( 'admin_menu', 'uas_add_admin_menu' );
+  		add_action( 'admin_menu', 'uas_edit_admin_menus' );  	
+        add_action( 'admin_head', 'uas_admin_js' );
+        add_action( 'admin_head', 'uas_admin_css' );
 		add_filter( 'plugin_action_links', 'uas_plugin_action_links', 10, 2 );
   	}
  
-	function edit_admin_menus() {
+	function uas_edit_admin_menus() {
 		global $menu; 
 		global $current_user;
-		$uas_options=get_admin_options();
+		$uas_options=uas_get_admin_options();
 		$newmenu=array();
 		//rebuild menu based on saved options
 		foreach ($menu as $menuitem){
@@ -44,7 +44,7 @@ License: GPLv2 or later
  		return $links;
 	}
  	
-	function add_admin_menu() {
+	function uas_add_admin_menu() {
          add_menu_page(	esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ), 
 						esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ), 
 						'manage_options', 
@@ -52,22 +52,22 @@ License: GPLv2 or later
 						'useradminsimplifier_options_page' ); 
     }
 	
-	function get_admin_options(){
+	function uas_get_admin_options(){
         $saved_options = get_option( 'useradminsimplifier_options' );
         return is_array( $saved_options ) ? $saved_options : array();
     }
 	
-    function save_admin_options( $uas_options ){
+    function uas_save_admin_options( $uas_options ){
          update_option( 'useradminsimplifier_options', $uas_options );
     }
 	
-	function cleanmenuname($menuname){ //clean up menu names provided by WordPress
+	function uas_clean_menu_name($menuname){ //clean up menu names provided by WordPress
  		$menuname = preg_replace( '/<span (.*?)span>/' , '' , $menuname ); //strip the count appended to menus like the post count
 		return ( $menuname ); 
 	}
 	
 	function useradminsimplifier_options_page() {
-		$uas_options=get_admin_options();
+		$uas_options=uas_get_admin_options();
 		$uas_selecteduser = isset( $_POST['uas_user_select'] ) ? $_POST['uas_user_select']: '';
  		global $menu;
 		global $current_user;
@@ -80,7 +80,7 @@ License: GPLv2 or later
 		else {
 			$uas_options['selecteduser']=$uas_selecteduser;
 			//process submitted menu selections
-			if (isset ( $_POST['menuselection'] ) && is_array($_POST['menuselection'])) {
+ 			if (isset ( $_POST['menuselection'] ) && is_array($_POST['menuselection'])) {
 				$menusectionsubmitted=true;
 				foreach ($_POST['menuselection'] as $key => $value) {
  						$nowselected[$uas_selecteduser][$value]=1; //disable this menu for this user
@@ -117,10 +117,9 @@ License: GPLv2 or later
  ?>        
     <div class="uas_container" id="choosemenus">
         <h3>
-            <?php esc_html_e( 'Select menus to disable for this user', 'user_admin_simplifier'); ?>: <br />
-
-        </h3>
-        <input  style="display:none;" type="checkbox" checked="checked" value="uas_dummy" id="menuselection[]" name="menuselection[]">
+            <?php esc_html_e( 'Select menus to disable for this user', 'user_admin_simplifier'); ?>: 
+      </h3> 
+        <input class="uas_dummy" style="display:none;" type="checkbox" checked="checked" value="uas_dummy" id="menuselection[]" name="menuselection[]">
 <?php
 				//lets start with top level menus stored in global $menu
 				//will add submenu support if needed later
@@ -155,33 +154,42 @@ License: GPLv2 or later
 						//don't allow current user to diable their own access to the plugin
 						( $uas_selecteduser==$current_user->user_nicename && "toplevel_page_useradminsimplifier/useradminsimplifier"== $menuitem[5]  ? ' disabled ' : '') .
 						' /> ' . 
-						cleanmenuname($menuitem[0]) . "</p>";
+						uas_clean_menu_name($menuitem[0]) . "</p>";
 					} //menu separator
  				} 
 ?>
-	<input name="uas_save" type="submit" id="uas_save" value="Save Changes" />
+	<input name="uas_save" type="submit" id="uas_save" value="Save Changes" /> <br />
+<br />            <?php esc_html_e( 'or', 'user_admin_simplifier'); ?>: 
+
+	<input name="uas_reset" type="button" id="uas_reset" value="Clear User Settings" />
+
     </div>
  <?php
 			}
 ?>
+
    </form>
 </div>
  <?php
-save_admin_options( $uas_options );
+uas_save_admin_options( $uas_options );
  	}
     
-	 function admin_js(){
+	 function uas_admin_js(){
 ?>
 <script type="text/javascript">
 	jQuery(function() {
 		jQuery('form#uas_options_form #uas_user_select').change( function() {
 				jQuery('form#uas_options_form').submit();
 			}) 
+	jQuery('form#uas_options_form #uas_reset').click( function() {
+				jQuery('form#uas_options_form input').not('.uas_dummy').removeAttr('checked');
+				jQuery('form#uas_options_form').submit();
+ 			}) 
 	});
 </script>
 <?php
     }
-	function admin_css(){
+	function uas_admin_css(){
 ?>
 <style type="text/css">
 	.uas_options_form {
