@@ -34,7 +34,7 @@ Nothing yet.
 
 == Screenshots ==
 1. Choose a user to edit their menus
-2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for that user.
+2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for the selected user.
  
 == Changelog ==
 
