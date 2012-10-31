@@ -161,7 +161,7 @@ License: GPLv2 or later
 	<input name="uas_save" type="submit" id="uas_save" value="Save Changes" /> <br />
 <br />            <?php esc_html_e( 'or', 'user_admin_simplifier'); ?>: 
 
-	<input name="uas_reset" type="button" id="uas_reset" value="Clear User Settings" />
+	<input name="uas_reset" type="button" id="uas_reset" value="<?php esc_html_e( 'Clear User Settings', 'user_admin_simplifier'); ?>" />
 
     </div>
  <?php
