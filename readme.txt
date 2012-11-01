@@ -4,7 +4,7 @@ Donate link:
 Tags: admin simplify 
 Requires at least: 3.0.1
 Tested up to: 3.4
-Stable tag: 0.3
+Stable tag: 0.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,11 @@ Nothing yet.
 2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for the selected user.
  
 == Changelog ==
+
+= 0.3.1 =
+* updated code for Clear User Settings button to colear settings for selected user 
+* updated plugin admin, added priorities - uses stored menu if menu already modified, that way current user can always see all menu items 
+
 
 = 0.3 =
 * added uninistall file - will now remove options when deleting plugin
