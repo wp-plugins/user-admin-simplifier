@@ -4,7 +4,7 @@ Donate link:
 Tags: admin simplify 
 Requires at least: 3.0.1
 Tested up to: 3.4
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,10 @@ Nothing yet.
 2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for the selected user.
  
 == Changelog ==
+
+= 0.3.2 =
+* bug fixes
+
 
 = 0.3.1 =
 * updated code for Clear User Settings button to clear settings for selected user 

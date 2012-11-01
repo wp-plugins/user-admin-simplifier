@@ -3,7 +3,7 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier.php
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu sections off.
-Version: 0.3.1
+Version: 0.3.2
 Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
@@ -13,8 +13,8 @@ License: GPLv2 or later
  	
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
-		add_action( 'admin_menu', 'uas_add_admin_menu', 100 );
-  		add_action( 'admin_menu', 'uas_edit_admin_menus', 99 );  	
+		add_action( 'admin_menu', 'uas_add_admin_menu' ,99 );
+  		add_action( 'admin_menu', 'uas_edit_admin_menus', 100 );  	
         add_action( 'admin_head', 'uas_admin_js' );
         add_action( 'admin_head', 'uas_admin_css' );
 		add_filter( 'plugin_action_links', 'uas_plugin_action_links', 10, 2 );
@@ -24,14 +24,14 @@ License: GPLv2 or later
 		global $menu; 
 		global $current_user;
 		global $storedmenu;
-		$storedmenu=$menu;
+		$storedmenu=$menu; //store the original menu
 		$uas_options=uas_get_admin_options();
 		$newmenu=array();
 		//rebuild menu based on saved options
 		foreach ($menu as $menuitem){
 			if  ( isset ( $menuitem[5] ) && isset( $uas_options[$current_user->user_login][$menuitem[5]] ) &&
-			 1 == $uas_options[$current_user->user_login][$menuitem[5]] ) {
- 				remove_menu_page($menuitem[2]);
+	 	 			1 == $uas_options[$current_user->user_login][$menuitem[5]] ) {
+  				remove_menu_page($menuitem[2]);
 			}
  		}
  	}
@@ -84,13 +84,12 @@ License: GPLv2 or later
 			$uas_options['selecteduser'] = $uas_selecteduser;
 		} 
 		else {
-			//already verified $uas_options['selecteduser'] = $uas_selecteduser;
-			//process submitted menu selections
+			$uas_options['selecteduser'] = $uas_selecteduser;
+			// process submitted menu selections
 			if ( isset ($_POST['uas_reset'] ) ){
 				//reset options for this user by clearing all their options 
 				unset ( $uas_options[ $uas_selecteduser ] );
-				echo "reset $uas_selecteduser"; 
-			}
+ 			}
 			else
 			{
 				if (isset ( $_POST['menuselection'] ) && is_array($_POST['menuselection'])) {
