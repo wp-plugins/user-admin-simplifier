@@ -13,8 +13,8 @@ License: GPLv2 or later
  	
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
-		add_action( 'admin_menu', 'uas_add_admin_menu' );
-  		add_action( 'admin_menu', 'uas_edit_admin_menus' );  	
+		add_action( 'admin_menu', 'uas_add_admin_menu', 100 );
+  		add_action( 'admin_menu', 'uas_edit_admin_menus', 99 );  	
         add_action( 'admin_head', 'uas_admin_js' );
         add_action( 'admin_head', 'uas_admin_css' );
 		add_filter( 'plugin_action_links', 'uas_plugin_action_links', 10, 2 );
@@ -23,13 +23,14 @@ License: GPLv2 or later
 	function uas_edit_admin_menus() {
 		global $menu; 
 		global $current_user;
+		global $storedmenu;
+		$storedmenu=$menu;
 		$uas_options=uas_get_admin_options();
 		$newmenu=array();
 		//rebuild menu based on saved options
 		foreach ($menu as $menuitem){
 			if  ( isset ( $menuitem[5] ) && isset( $uas_options[$current_user->user_login][$menuitem[5]] ) &&
 			 1 == $uas_options[$current_user->user_login][$menuitem[5]] ) {
-				//unset ($menu[key($menuitem)]);
  				remove_menu_page($menuitem[2]);
 			}
  		}
@@ -71,6 +72,11 @@ License: GPLv2 or later
 		$uas_selecteduser = isset( $_POST['uas_user_select'] ) ? $_POST['uas_user_select']: '';
  		global $menu;
 		global $current_user;
+		global $storedmenu;
+		if ( !isset( $storedmenu ) ){
+			$storedmenu = $menu;
+		}
+
 		$nowselected = array ();
 		$menusectionsubmitted=false;
   		if ( isset( $uas_options['selecteduser'] ) && $uas_options['selecteduser'] != $uas_selecteduser ) {
@@ -78,12 +84,20 @@ License: GPLv2 or later
 			$uas_options['selecteduser'] = $uas_selecteduser;
 		} 
 		else {
-			$uas_options['selecteduser']=$uas_selecteduser;
+			//already verified $uas_options['selecteduser'] = $uas_selecteduser;
 			//process submitted menu selections
- 			if (isset ( $_POST['menuselection'] ) && is_array($_POST['menuselection'])) {
-				$menusectionsubmitted=true;
-				foreach ($_POST['menuselection'] as $key => $value) {
- 						$nowselected[$uas_selecteduser][$value]=1; //disable this menu for this user
+			if ( isset ($_POST['uas_reset'] ) ){
+				//reset options for this user by clearing all their options 
+				unset ( $uas_options[ $uas_selecteduser ] );
+				echo "reset $uas_selecteduser"; 
+			}
+			else
+			{
+				if (isset ( $_POST['menuselection'] ) && is_array($_POST['menuselection'])) {
+					$menusectionsubmitted=true;
+					foreach ($_POST['menuselection'] as $key => $value) {
+							$nowselected[$uas_selecteduser][$value]=1; //disable this menu for this user
+					}
 				}
 			}
 		}
@@ -124,7 +138,7 @@ License: GPLv2 or later
 				//lets start with top level menus stored in global $menu
 				//will add submenu support if needed later
  				$rowcount=0; 
-				foreach($menu as $menuitem){
+				foreach($storedmenu as $menuitem){
 					$menuuseroption=0;
 					if ( !('wp-menu-separator' == $menuitem[4]) ){
 						//reset							$uas_options[$uas_selecteduser][$menuitem[5]]=0;
@@ -161,7 +175,7 @@ License: GPLv2 or later
 	<input name="uas_save" type="submit" id="uas_save" value="Save Changes" /> <br />
 <br />            <?php esc_html_e( 'or', 'user_admin_simplifier'); ?>: 
 
-	<input name="uas_reset" type="button" id="uas_reset" value="<?php esc_html_e( 'Clear User Settings', 'user_admin_simplifier'); ?>" />
+	<input name="uas_reset" type="submit" id="uas_reset" value="<?php esc_html_e( 'Clear User Settings', 'user_admin_simplifier'); ?>" />
 
     </div>
  <?php
@@ -181,10 +195,6 @@ uas_save_admin_options( $uas_options );
 		jQuery('form#uas_options_form #uas_user_select').change( function() {
 				jQuery('form#uas_options_form').submit();
 			}) 
-	jQuery('form#uas_options_form #uas_reset').click( function() {
-				jQuery('form#uas_options_form input').not('.uas_dummy').removeAttr('checked');
-				jQuery('form#uas_options_form').submit();
- 			}) 
 	});
 </script>
 <?php
