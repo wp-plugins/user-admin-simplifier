@@ -39,7 +39,7 @@ Nothing yet.
 == Changelog ==
 
 = 0.3.1 =
-* updated code for Clear User Settings button to colear settings for selected user 
+* updated code for Clear User Settings button to clear settings for selected user 
 * updated plugin admin, added priorities - uses stored menu if menu already modified, that way current user can always see all menu items 
 
 
