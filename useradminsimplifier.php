@@ -3,7 +3,7 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier.php
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu sections off.
-Version: 0.3.2
+Version: 0.4.2
 Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
@@ -24,17 +24,31 @@ License: GPLv2 or later
 		global $menu; 
 		global $current_user;
 		global $storedmenu;
+		global $storedsubmenu;
+		global $submenu;
 		$storedmenu=$menu; //store the original menu
+		$storedsubmenu=$submenu; //store the original menu
 		$uas_options=uas_get_admin_options();
 		$newmenu=array();
 		//rebuild menu based on saved options
-		foreach ($menu as $menuitem){
+		foreach ($menu as $menuitem) {
 			if  ( isset ( $menuitem[5] ) && isset( $uas_options[$current_user->user_login][$menuitem[5]] ) &&
 	 	 			1 == $uas_options[$current_user->user_login][$menuitem[5]] ) {
   				remove_menu_page($menuitem[2]);
+			} else {
+				// lets check the submenus
+				if ( isset ( $storedsubmenu[$menuitem[2]] ) ) {
+					foreach ($storedsubmenu[$menuitem[2]] as $subsub) {	
+						$combinedname=$menuitem[5].$subsub[2];
+						if  ( isset ( $subsub[2] ) && isset( $uas_options[$current_user->user_login][$menuitem[5].$subsub[2]] ) &&
+							1 == $uas_options[$current_user->user_login][$menuitem[5].$subsub[2]] ) {
+ 								remove_submenu_page($menuitem[2],$subsub[2]);
+							}
+					}
+				}
 			}
  		}
- 	}
+  	}
 	
 	function uas_plugin_action_links( $links, $file ) {
  		if ( $file == plugin_basename( __FILE__ ) ) {
@@ -46,38 +60,43 @@ License: GPLv2 or later
 	}
  	
 	function uas_add_admin_menu() {
-         add_menu_page(	esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ), 
+         add_management_page(	esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ), 
 						esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ), 
 						'manage_options', 
 						'useradminsimplifier/useradminsimplifier.php',
 						'useradminsimplifier_options_page' ); 
     }
 	
-	function uas_get_admin_options(){
+	function uas_get_admin_options() {
         $saved_options = get_option( 'useradminsimplifier_options' );
         return is_array( $saved_options ) ? $saved_options : array();
     }
 	
-    function uas_save_admin_options( $uas_options ){
+    function uas_save_admin_options( $uas_options ) {
          update_option( 'useradminsimplifier_options', $uas_options );
     }
 	
-	function uas_clean_menu_name($menuname){ //clean up menu names provided by WordPress
+	function uas_clean_menu_name($menuname) { //clean up menu names provided by WordPress
  		$menuname = preg_replace( '/<span (.*?)span>/' , '' , $menuname ); //strip the count appended to menus like the post count
 		return ( $menuname ); 
-	}
-	
+	}	
+		
 	function useradminsimplifier_options_page() {
 		$uas_options=uas_get_admin_options();
 		$uas_selecteduser = isset( $_POST['uas_user_select'] ) ? $_POST['uas_user_select']: '';
  		global $menu;
+ 		global $submenu;
 		global $current_user;
 		global $storedmenu;
-		if ( !isset( $storedmenu ) ){
+		if ( !isset( $storedmenu ) ) {
 			$storedmenu = $menu;
 		}
+		global $storedsubmenu;
+		if ( !isset( $storedsubmenu ) ) {
+			$storedsubmenu = $submenu;
+		}
 
-		$nowselected = array ();
+		$nowselected = array (); //store selections to apply later in display loop where every menu option is iterated
 		$menusectionsubmitted=false;
   		if ( isset( $uas_options['selecteduser'] ) && $uas_options['selecteduser'] != $uas_selecteduser ) {
 			//user was changed
@@ -86,7 +105,7 @@ License: GPLv2 or later
 		else {
 			$uas_options['selecteduser'] = $uas_selecteduser;
 			// process submitted menu selections
-			if ( isset ($_POST['uas_reset'] ) ){
+			if ( isset ($_POST['uas_reset'] ) ) {
 				//reset options for this user by clearing all their options 
 				unset ( $uas_options[ $uas_selecteduser ] );
  			}
@@ -130,20 +149,19 @@ License: GPLv2 or later
  ?>        
     <div class="uas_container" id="choosemenus">
         <h3>
-            <?php esc_html_e( 'Select menus to disable for this user', 'user_admin_simplifier'); ?>: 
+            <?php esc_html_e( 'Select menus/submenus to disable for this user', 'user_admin_simplifier'); ?>: 
       </h3> 
         <input class="uas_dummy" style="display:none;" type="checkbox" checked="checked" value="uas_dummy" id="menuselection[]" name="menuselection[]">
 <?php
 				//lets start with top level menus stored in global $menu
 				//will add submenu support if needed later
  				$rowcount=0; 
-				foreach($storedmenu as $menuitem){
+				foreach($storedmenu as $menuitem) {
 					$menuuseroption=0;
-					if ( !('wp-menu-separator' == $menuitem[4]) ){
+					if ( !('wp-menu-separator' == $menuitem[4]) ) {
 						//reset							$uas_options[$uas_selecteduser][$menuitem[5]]=0;
 						if ( $menusectionsubmitted ) {
 							if ( isset( $nowselected[$uas_selecteduser][$menuitem[5]] ) ) { //any selected options for this user/menu
-								 
 								$menuuseroption=$uas_options[$uas_selecteduser][$menuitem[5]]= $nowselected[$uas_selecteduser][$menuitem[5]] ;
 							} 
 							else {
@@ -157,24 +175,54 @@ License: GPLv2 or later
 							$menuuseroption=0;
 							$uas_options[$uas_selecteduser][$menuitem[5]]=0;
 						}
- 						//check if selected user has capability for menu
-						//user_can( $user, $capability )
+ 						
 						//echo ( implode ( " ~ ",$menuitem ) );
-						//don't allow current user to diable their own access to the plugin
-						echo 	'<p'. (( 0 == $rowcount++ %2 ) ? '' : ' class="alternate"' ) . '>'.
+						//don't allow current user to disable their own access to the plugin
+						echo 	'<p class='. (( 0 == $rowcount++ %2 ) ? '"menumain"' : '"menualternate"' ) . '>'.
 						'<input type="checkbox" name="menuselection[]" id="menuselection[]" '.
 						'value="'. $menuitem[5] .'" ' . ( 1==$menuuseroption ? 'checked="checked"' : '') .
-						//don't allow current user to diable their own access to the plugin
-						( $uas_selecteduser==$current_user->user_nicename && "toplevel_page_useradminsimplifier/useradminsimplifier"== $menuitem[5]  ? ' disabled ' : '') .
-						' /> ' . 
+ 						' /> ' . 
 						uas_clean_menu_name($menuitem[0]) . "</p>";
-					} //menu separator
- 				} 
-?>
-	<input name="uas_save" type="submit" id="uas_save" value="Save Changes" /> <br />
-<br />            <?php esc_html_e( 'or', 'user_admin_simplifier'); ?>: 
+						if ( !( strpos( $menuitem[0], 'pending-count' ) ) ) { //top level menu items with pending count span don't have submenus
+							$topmenu=$menuitem[2];
+							//display submenus
+							if( isset(	$storedsubmenu[$topmenu] ) ) {
+							echo ( '<div class="submenu unselected"><a href="javascript:;">'. esc_html__( 'Show submenus', 'user_admin_simplifier').'</a></div><div class="submenuinner">' );
+ 							$subrowcount=0;
+								foreach ($storedsubmenu[$topmenu] as $subsub) {
+									$combinedname=$menuitem[5].$subsub[2];
+ 									$submenuuseroption = 0;
 
-	<input name="uas_reset" type="submit" id="uas_reset" value="<?php esc_html_e( 'Clear User Settings', 'user_admin_simplifier'); ?>" />
+									//echo implode( ' - ',$subsub).        ' -  <br />';
+									if ( $menusectionsubmitted ) {
+										if ( isset( $nowselected[$uas_selecteduser][$combinedname] ) ) { //any selected options for this user/submenu
+											$submenuuseroption=$uas_options[$uas_selecteduser][$combinedname]= $nowselected[$uas_selecteduser][$combinedname] ;
+										} 
+										else {
+											$submenuuseroption=$uas_options[$uas_selecteduser][$combinedname]=0;
+										}
+									}
+									
+									if ( isset( $uas_options[$uas_selecteduser][$combinedname] ) ) { //any saved options for this user/submenu
+										$submenuuseroption = $uas_options[$uas_selecteduser][$combinedname];
+									} else {
+										$submenuuseroption=0;
+										$uas_options[$uas_selecteduser][$combinedname]=0;
+									}
+										echo('<p class='. (( 0 == $subrowcount++ %2 ) ? '"submain"' : '"subalternate"' ) . '>'.
+											'<input type="checkbox" name="menuselection[]" id="menuselection[]" '.
+											'value="'. $combinedname .'" ' . ( 1==$submenuuseroption ? 'checked="checked"' : '') .
+											' /> '.uas_clean_menu_name($subsub[0]).'</p>');
+ 								}
+								echo ('</div>');
+							}
+						}
+					}
+				}
+?>
+	<input name="uas_save" type="submit" id="uas_save" value="<?php esc_html_e( 'Save Changes', 'user_admin_simplifier'); ?>" /> <br />
+             <?php esc_html_e( 'or', 'user_admin_simplifier'); ?>: 
+ 	<input name="uas_reset" type="submit" id="uas_reset" value="<?php esc_html_e( 'Clear User Settings', 'user_admin_simplifier'); ?>" />
 
     </div>
  <?php
@@ -187,7 +235,7 @@ License: GPLv2 or later
 uas_save_admin_options( $uas_options );
  	}
     
-	 function uas_admin_js(){
+	 function uas_admin_js() {
 ?>
 <script type="text/javascript">
 	jQuery(function() {
@@ -195,12 +243,53 @@ uas_save_admin_options( $uas_options );
 				jQuery('form#uas_options_form').submit();
 			}) 
 	});
+	
+	jQuery(document).ready(function () {
+		jQuery('div.submenuinner').slideUp('fast').hide();
+		//TO-DO: makes these submenu openings persist, save state in cookies?
+		jQuery('.submenu').click(function() {
+			inner=jQuery(this).next('.submenuinner');
+			if (jQuery(inner).is(":hidden")) {
+        		jQuery(inner).show().slideDown('fast');
+				jQuery(this).removeClass('unselected').addClass('selected');
+				jQuery(this).children('a').text('<?php esc_html_e( 'Hide submenus', 'user_admin_simplifier')?>');
+			} else {
+        		jQuery(inner).slideUp('fast').hide();
+				jQuery(this).removeClass('selected').addClass('unselected');
+				jQuery(this).children('a').text('<?php esc_html_e( 'Show submenus', 'user_admin_simplifier')?>');
+
+			}
+    });
+});
 </script>
 <?php
     }
-	function uas_admin_css(){
+	function uas_admin_css() {
 ?>
 <style type="text/css">
+	 .unselected {
+ 		background-image:url(<?php echo ( plugins_url( 'images/plus15.png' , __FILE__ ) ); ?>);
+	}
+	 .selected {
+		background-image:url(<?php echo ( plugins_url( 'images/minus15.png' , __FILE__ ) ); ?>);
+ 	}
+	
+	.submenu {
+		margin-left:200px;
+		padding-left:20px;
+ 		font-size:12px;
+		height:22px;
+		width:200px;
+		margin-top:-25px;
+		position:absolute;
+ 		background-repeat:no-repeat;
+		background-position:left top;
+ 	}
+	
+	.submenuinner {
+		margin-left:50px;
+	}
+	
 	.uas_options_form {
 		font-size:14px;
 	}
@@ -209,8 +298,10 @@ uas_save_admin_options( $uas_options );
 		margin:0 0;
 		padding:.5em .5em;
 	}
-	.uas_options_form input {
+	.uas_options_form input[type="submit"] {
 		font-size:18px;
+		margin-top:10px;
+		margin-bottom:10px;
 	}
 	
 	.uas_options_form select {
@@ -218,12 +309,26 @@ uas_save_admin_options( $uas_options );
 		padding:5px;
 		font-size:16px;
 	}
- 	#choosemenus{
+ 	#choosemenus {
 		border-width:1px;
 		border-color:#ccc;
 		padding:10px;
 		border-style:solid;
 	}
+
+	.submain {
+		background-color: #F3F3F3;
+	}
+	.subalternate {
+		background-color: #ECECEC;
+	}
+	.menumain {
+		background-color: #FCFCFC;
+	}
+	.menualternate {
+		background-color: #DDDDDD;
+	}
+
 </style>
 <?php
     }
