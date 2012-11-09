@@ -8,11 +8,11 @@ Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu sections off.
+Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu/submenu sections off.
 
 == Description ==
 
-Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu sections off.
+Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu/submenu sections off.
  
 == Installation ==
 
