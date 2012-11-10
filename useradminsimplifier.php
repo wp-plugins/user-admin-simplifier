@@ -3,7 +3,7 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu/submenu sections off.
-Version: 0.4.5
+Version: 0.4.3
 Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
@@ -32,7 +32,7 @@ License: GPLv2 or later
 		$newmenu = array();
 		//rebuild menu based on saved options
 		foreach ( $menu as $menuitem ) {
-			if  ( isset ( $menuitem[5] ) && isset( $uas_options[ $current_user->user_login ][ $menuitem[5] ] ) &&
+			if ( isset( $menuitem[5] ) && isset( $uas_options[ $current_user->user_login ][ $menuitem[5] ] ) &&
 	 	 			1 == $uas_options[ $current_user->user_login ][ $menuitem[5] ] ) {
   				remove_menu_page( $menuitem[2] );
 			} else {
@@ -40,8 +40,8 @@ License: GPLv2 or later
 				if ( isset ( $storedsubmenu[ $menuitem[2] ] ) ) {
 					foreach ( $storedsubmenu[ $menuitem[2] ] as $subsub ) {	
 						$combinedname = $menuitem[5] . $subsub[2];
-						if  ( isset ( $subsub[2] ) && isset( $uas_options[ $current_user->user_login ][ $menuitem[5] . $subsub[2] ] ) &&
-							1 == $uas_options[ $current_user->user_login ][ $menuitem[5] . $subsub[2] ] ) {
+						if  ( isset ( $subsub[2] ) && isset( $uas_options[ $current_user->user_login ][ $combinedname ] ) &&
+							1 == $uas_options[ $current_user->user_login ][ $combinedname ] ) {
  								remove_submenu_page( $menuitem[2], $subsub[2] );
 						}
 					}
@@ -171,34 +171,29 @@ License: GPLv2 or later
 							$menuuseroption = 0;
 							$uas_options[ $uas_selecteduser ][ $menuitem[5] ] = 0;
 						}
-						//echo ( implode ( " ~ ",$menuitem ) );
-						//don't allow current user to disable their own access to the plugin
 						echo 	'<p class='. ( ( 0 == $rowcount++ %2 ) ? '"menumain"' : '"menualternate"' ) . '>' .
 								'<input type="checkbox" name="menuselection[]" id="menuselection[]" ' . 'value="'. $menuitem[5] .'" ' . ( 1 == $menuuseroption ? 'checked="checked"' : '' ) . ' /> ' . 
 								uas_clean_menu_name( $menuitem[0] ) . "</p>";
 						if ( !( strpos( $menuitem[0], 'pending-count' ) ) ) { //top level menu items with pending count span don't have submenus
 							$topmenu = $menuitem[2];
-							//display submenus
-							if( isset( 	$storedsubmenu[ $topmenu] ) ) {
-							echo ( '<div class="submenu unselected"><a href="javascript:;">'. esc_html__( 'Show submenus', 'user_admin_simplifier' ) . '</a></div><div class="submenuinner">' );
- 							$subrowcount = 0;
+							if ( isset( $storedsubmenu[ $topmenu] ) ) { //display submenus
+								echo ( '<div class="submenu unselected"><a href="javascript:;">'. esc_html__( 'Show submenus', 'user_admin_simplifier' ) . '</a></div><div class="submenuinner">' );
+ 								$subrowcount = 0;
 								foreach ( $storedsubmenu[ $topmenu] as $subsub ) {
 									$combinedname = $menuitem[5] . $subsub[2];
  									$submenuuseroption = 0;
-									//echo implode( ' - ',$subsub ).        ' -  <br />';
-									if ( $menusectionsubmitted ) {
-										if ( isset( $nowselected[ $uas_selecteduser ][ $combinedname] ) ) { //any selected options for this user/submenu
-											$submenuuseroption = $uas_options[ $uas_selecteduser ][ $combinedname] = $nowselected[ $uas_selecteduser ][ $combinedname] ;
+									if ( $menusectionsubmitted ) { //deal with submitted checkboxes
+										if ( isset( $nowselected[ $uas_selecteduser ][ $combinedname ] ) ) { // selected option for this user/submenu
+											$submenuuseroption = $uas_options[ $uas_selecteduser ][ $combinedname ] = $nowselected[ $uas_selecteduser ][ $combinedname ] ;
 										} 
 										else {
-											$submenuuseroption = $uas_options[ $uas_selecteduser ][ $combinedname] = 0;
+											$uas_options[ $uas_selecteduser ][ $combinedname ] = 0;
 										}
 									}
-									if ( isset( $uas_options[ $uas_selecteduser ][ $combinedname] ) ) { //any saved options for this user/submenu
-										$submenuuseroption = $uas_options[ $uas_selecteduser ][ $combinedname];
+									if ( isset( $uas_options[ $uas_selecteduser ][ $combinedname ] ) ) { // now show saved options for this user/submenu
+										$submenuuseroption = $uas_options[ $uas_selecteduser ][ $combinedname ];
 									} else {
-										$submenuuseroption = 0;
-										$uas_options[ $uas_selecteduser ][ $combinedname] = 0;
+										$uas_options[ $uas_selecteduser ][ $combinedname ] = 0;
 									}
 									echo( '<p class='. ( ( 0 == $subrowcount++ %2 ) ? '"submain"' : '"subalternate"' ) . '>' .
 										'<input type="checkbox" name="menuselection[]" id="menuselection[]" ' .

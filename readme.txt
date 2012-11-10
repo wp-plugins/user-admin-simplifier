@@ -4,7 +4,7 @@ Donate link:
 Tags: admin simplify menus submenus 
 Requires at least: 3.0.1
 Tested up to: 3.4
-Stable tag: 0.4.2
+Stable tag: 0.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,8 +31,8 @@ None so far.
 
 == Upgrade Notice ==
 
-= 0.4.2 =
-Adds ability to disable individual submenus.
+= 0.4.3 =
+Now works with submenus as well as top level menus.
 
 == Screenshots ==
 
@@ -40,6 +40,9 @@ Adds ability to disable individual submenus.
 2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for the selected user.
  
 == Changelog ==
+
+= 0.4.3 =
+* code cleanup
 
 = 0.4.2 =
 * added code to handle submenus as well as top level menus
