@@ -13,7 +13,7 @@ License: GPLv2 or later
  	
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
-		add_action( 'admin_menu', 'uas_add_admin_menu' , 99 );
+		add_action( 'admin_menu', 'uas_add_admin_menu', 99 );
   		add_action( 'admin_menu', 'uas_edit_admin_menus', 100 );  	
         add_action( 'admin_head', 'uas_admin_js' );
         add_action( 'admin_head', 'uas_admin_css' );
@@ -26,10 +26,10 @@ License: GPLv2 or later
 		global $storedmenu;
 		global $storedsubmenu;
 		global $submenu;
-		$storedmenu=$menu; //store the original menu
-		$storedsubmenu=$submenu; //store the original menu
-		$uas_options=uas_get_admin_options();
-		$newmenu=array();
+		$storedmenu = $menu; //store the original menu
+		$storedsubmenu = $submenu; //store the original menu
+		$uas_options = uas_get_admin_options();
+		$newmenu = array();
 		//rebuild menu based on saved options
 		foreach ( $menu as $menuitem ) {
 			if  ( isset ( $menuitem[5] ) && isset( $uas_options[ $current_user->user_login ][ $menuitem[5] ] ) &&
@@ -39,10 +39,10 @@ License: GPLv2 or later
 				// lets check the submenus
 				if ( isset ( $storedsubmenu[ $menuitem[2] ] ) ) {
 					foreach ( $storedsubmenu[ $menuitem[2] ] as $subsub ) {	
-						$combinedname=$menuitem[5].$subsub[2];
-						if  ( isset ( $subsub[2] ) && isset( $uas_options[ $current_user->user_login ][ $menuitem[5].$subsub[2] ] ) &&
-							1 == $uas_options[ $current_user->user_login ][ $menuitem[5].$subsub[2] ] ) {
- 								remove_submenu_page( $menuitem[2],$subsub[2] );
+						$combinedname = $menuitem[5] . $subsub[2];
+						if  ( isset ( $subsub[2] ) && isset( $uas_options[ $current_user->user_login ][ $menuitem[5] . $subsub[2] ] ) &&
+							1 == $uas_options[ $current_user->user_login ][ $menuitem[5] . $subsub[2] ] ) {
+ 								remove_submenu_page( $menuitem[2], $subsub[2] );
 						}
 					}
 				}
@@ -52,7 +52,7 @@ License: GPLv2 or later
 	
 	function uas_plugin_action_links( $links, $file ) {
  		if ( $file == plugin_basename( __FILE__ ) ) {
-			$posk_links = '<a href="'.get_admin_url().'admin.php?page=useradminsimplifier/useradminsimplifier.php">'.__( 'Settings' ).'</a>';
+			$posk_links = '<a href="' . get_admin_url() . 'admin.php?page=useradminsimplifier/useradminsimplifier.php">' . esc_html__( 'Settings', 'useradminsimplifier' ) . '</a>';
 			// make the 'Settings' link appear first
 			array_unshift( $links, $posk_links );
 		}
@@ -77,12 +77,12 @@ License: GPLv2 or later
     }
 	
 	function uas_clean_menu_name( $menuname ) { //clean up menu names provided by WordPress
- 		$menuname = preg_replace( '/<span ( .*? )span>/' , '' , $menuname ); //strip the count appended to menus like the post count
+ 		$menuname = preg_replace( '/<span(.*?)span>/', '', $menuname ); //strip the count appended to menus like the post count
 		return ( $menuname ); 
 	}	
 		
 	function useradminsimplifier_options_page() {
-		$uas_options=uas_get_admin_options();
+		$uas_options = uas_get_admin_options();
 		$uas_selecteduser = isset( $_POST['uas_user_select'] ) ? $_POST['uas_user_select']: '';
  		global $menu;
  		global $submenu;
@@ -97,7 +97,7 @@ License: GPLv2 or later
 		}
 
 		$nowselected = array (); //store selections to apply later in display loop where every menu option is iterated
-		$menusectionsubmitted=false;
+		$menusectionsubmitted = false;
   		if ( isset( $uas_options['selecteduser'] ) && $uas_options['selecteduser'] != $uas_selecteduser ) {
 			//user was changed
 			$uas_options['selecteduser'] = $uas_selecteduser;
@@ -111,7 +111,7 @@ License: GPLv2 or later
 			else
 			{
 				if ( isset ( $_POST['menuselection'] ) && is_array( $_POST['menuselection'] ) ) {
-					$menusectionsubmitted=true;
+					$menusectionsubmitted = true;
 					foreach ( $_POST['menuselection'] as $key => $value ) {
 						$nowselected[ $uas_selecteduser ][ $value] = 1; //disable this menu for this user
 					}
@@ -134,8 +134,8 @@ License: GPLv2 or later
 <?php
 			$blogusers = get_users( 'orderby=nicename' );
 			foreach ( $blogusers as $user ) {
-				echo ( '<option value="'. $user->user_nicename .'" ' ); 
-				echo ( ( $user->user_nicename==$uas_selecteduser ) ? 'selected' : '' );
+				echo ( '<option value="'. $user->user_nicename . '" ' ); 
+				echo ( ( $user->user_nicename == $uas_selecteduser ) ? 'selected' : '' );
 				echo ( '>' . $user->user_nicename .  '</option>' );
 			}
 ?>
@@ -159,10 +159,10 @@ License: GPLv2 or later
 						//reset							$uas_options[ $uas_selecteduser ][ $menuitem[5] ] = 0;
 						if ( $menusectionsubmitted ) {
 							if ( isset( $nowselected[ $uas_selecteduser ][ $menuitem[5] ] ) ) { //any selected options for this user/menu
-								$menuuseroption=$uas_options[ $uas_selecteduser ][ $menuitem[5] ] = $nowselected[ $uas_selecteduser ][ $menuitem[5] ] ;
+								$menuuseroption = $uas_options[ $uas_selecteduser ][ $menuitem[5] ] = $nowselected[ $uas_selecteduser ][ $menuitem[5] ] ;
 							} 
 							else {
-								$menuuseroption=$uas_options[ $uas_selecteduser ][ $menuitem[5] ] = 0;
+								$menuuseroption = $uas_options[ $uas_selecteduser ][ $menuitem[5] ] = 0;
 							}
 						}
 						if ( isset( $uas_options[ $uas_selecteduser ][ $menuitem[5] ] ) ) { //any saved options for this user/menu
@@ -173,27 +173,25 @@ License: GPLv2 or later
 						}
 						//echo ( implode ( " ~ ",$menuitem ) );
 						//don't allow current user to disable their own access to the plugin
-						echo 	'<p class='. ( ( 0 == $rowcount++ %2 ) ? '"menumain"' : '"menualternate"' ) . '>'.
-						'<input type="checkbox" name="menuselection[]" id="menuselection[]" '.
-						'value="'. $menuitem[5] .'" ' . ( 1==$menuuseroption ? 'checked="checked"' : '' ) .
- 						' /> ' . 
-						uas_clean_menu_name( $menuitem[0] ) . "</p>";
+						echo 	'<p class='. ( ( 0 == $rowcount++ %2 ) ? '"menumain"' : '"menualternate"' ) . '>' .
+								'<input type="checkbox" name="menuselection[]" id="menuselection[]" ' . 'value="'. $menuitem[5] .'" ' . ( 1 == $menuuseroption ? 'checked="checked"' : '' ) . ' /> ' . 
+								uas_clean_menu_name( $menuitem[0] ) . "</p>";
 						if ( !( strpos( $menuitem[0], 'pending-count' ) ) ) { //top level menu items with pending count span don't have submenus
-							$topmenu=$menuitem[2];
+							$topmenu = $menuitem[2];
 							//display submenus
 							if( isset( 	$storedsubmenu[ $topmenu] ) ) {
-							echo ( '<div class="submenu unselected"><a href="javascript:;">'. esc_html__( 'Show submenus', 'user_admin_simplifier' ).'</a></div><div class="submenuinner">' );
+							echo ( '<div class="submenu unselected"><a href="javascript:;">'. esc_html__( 'Show submenus', 'user_admin_simplifier' ) . '</a></div><div class="submenuinner">' );
  							$subrowcount = 0;
 								foreach ( $storedsubmenu[ $topmenu] as $subsub ) {
-									$combinedname = $menuitem[5].$subsub[2];
+									$combinedname = $menuitem[5] . $subsub[2];
  									$submenuuseroption = 0;
 									//echo implode( ' - ',$subsub ).        ' -  <br />';
 									if ( $menusectionsubmitted ) {
 										if ( isset( $nowselected[ $uas_selecteduser ][ $combinedname] ) ) { //any selected options for this user/submenu
-											$submenuuseroption=$uas_options[ $uas_selecteduser ][ $combinedname] = $nowselected[ $uas_selecteduser ][ $combinedname] ;
+											$submenuuseroption = $uas_options[ $uas_selecteduser ][ $combinedname] = $nowselected[ $uas_selecteduser ][ $combinedname] ;
 										} 
 										else {
-											$submenuuseroption=$uas_options[ $uas_selecteduser ][ $combinedname] = 0;
+											$submenuuseroption = $uas_options[ $uas_selecteduser ][ $combinedname] = 0;
 										}
 									}
 									if ( isset( $uas_options[ $uas_selecteduser ][ $combinedname] ) ) { //any saved options for this user/submenu
@@ -202,10 +200,10 @@ License: GPLv2 or later
 										$submenuuseroption = 0;
 										$uas_options[ $uas_selecteduser ][ $combinedname] = 0;
 									}
-									echo( '<p class='. ( ( 0 == $subrowcount++ %2 ) ? '"submain"' : '"subalternate"' ) . '>'.
-										'<input type="checkbox" name="menuselection[]" id="menuselection[]" '.
-										'value="'. $combinedname .'" ' . ( 1==$submenuuseroption ? 'checked="checked"' : '' ) .
-										' /> '.uas_clean_menu_name( $subsub[0] ).'</p>' );
+									echo( '<p class='. ( ( 0 == $subrowcount++ %2 ) ? '"submain"' : '"subalternate"' ) . '>' .
+										'<input type="checkbox" name="menuselection[]" id="menuselection[]" ' .
+										'value="'. $combinedname . '" ' . ( 1 == $submenuuseroption ? 'checked="checked"' : '' ) .
+										' /> ' . uas_clean_menu_name( $subsub[0] ) . '</p>' );
  								}
 								echo ( '</div>' );
 							}
@@ -259,10 +257,10 @@ uas_save_admin_options( $uas_options );
 ?>
 <style type="text/css">
 	 .unselected {
- 		background-image:url( <?php echo ( plugins_url( 'images/plus15.png' , __FILE__ ) ); ?> );
+ 		background-image:url( <?php echo ( plugins_url( 'images/plus15.png', __FILE__ ) ); ?> );
 	}
 	 .selected {
-		background-image:url( <?php echo ( plugins_url( 'images/minus15.png' , __FILE__ ) ); ?> );
+		background-image:url( <?php echo ( plugins_url( 'images/minus15.png', __FILE__ ) ); ?> );
  	}
 	.submenu {
 		margin-left:200px;
