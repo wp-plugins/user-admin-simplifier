@@ -13,7 +13,7 @@ License: GPLv2 or later
  	
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
-		add_action( 'admin_menu', 'uas_add_admin_menu' ,99 );
+		add_action( 'admin_menu', 'uas_add_admin_menu' , 99 );
   		add_action( 'admin_menu', 'uas_edit_admin_menus', 100 );  	
         add_action( 'admin_head', 'uas_admin_js' );
         add_action( 'admin_head', 'uas_admin_css' );
