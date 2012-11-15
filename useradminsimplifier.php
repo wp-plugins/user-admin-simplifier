@@ -11,6 +11,8 @@ License: GPLv2 or later
 
 	add_action( 'init', 'uas_init' );
  	
+	//future: impletement show only user's available menus, eg. less than admins as per suggestion
+	
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
 		add_action( 'admin_menu', 'uas_add_admin_menu', 99 );
