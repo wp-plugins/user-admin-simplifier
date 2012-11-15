@@ -28,10 +28,11 @@ Unininstalling and deleting the plugin will remove all of its settings.
 = Does it work with WordPress Multisite? =
 
 Yes! In a multisite install, User Admin Simplifier works as follows:
-	* plugin works on a per site/user basis
-	* logging into dashboard for a specific site and visiting the plugin admin only shows the users with access to that site
-	* restricting menus for users works as expected and disables menus for user on that site only
-	* disabling menus for a user only affects current site. user's menus remain unaffected in other sites 
+
+* plugin works on a per site/user basis
+* logging into dashboard for a specific site and visiting the plugin admin only shows the users with access to that site
+* restricting menus for users works as expected and disables menus for user on that site only
+* disabling menus for a user only affects current site. user's menus remain unaffected in other sites 
 
 == Upgrade Notice ==
 
