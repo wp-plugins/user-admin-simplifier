@@ -3,8 +3,8 @@ Contributors: adamsilverstein
 Donate link:  
 Tags: admin simplify menus submenus 
 Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 0.4.3
+Tested up to: 3.5
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Lets any Administrator simplify the WordPress Admin interface, on a per-user bas
 Install User Admin Simplifier either via the WordPress.org plugin directory, or by uploading the files to your server
 That’s it. You’re ready to go! To edit your users menus, go to Tools->User Admin Simplifier
 
-Submenus are now avaialable for disabling.  Note that disabling a top level menu removes it, no submenu items will be available. On the other hand, disabling all submenu items does not disable the top level menu.  
+Submenus are now available for disabling.  Note that disabling a top level menu removes it, no submenu items will be available. On the other hand, disabling all submenu items does not disable the top level menu.  
 
 Unininstalling and deleting the plugin will remove all of its settings.
 
