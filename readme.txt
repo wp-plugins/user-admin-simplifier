@@ -3,8 +3,8 @@ Contributors: adamsilverstein
 Donate link:  
 Tags: admin simplify menus submenus 
 Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 0.4.3
+Tested up to: 3.5
+Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,8 +35,8 @@ Yes! In a multisite install, User Admin Simplifier works as follows:
 
 == Upgrade Notice ==
 
-= 0.4.3 =
-Now works with submenus as well as top level menus.
+= 0.5.0 =
+Bug fixes.
 
 == Screenshots ==
 
@@ -44,6 +44,9 @@ Now works with submenus as well as top level menus.
 2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for the selected user.
  
 == Changelog ==
+
+= 0.5.0 =
+* Corrected issue that prevented Appearance->Editor from showing up (at all).
 
 = 0.4.3 =
 * code cleanup

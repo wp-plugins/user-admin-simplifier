@@ -3,7 +3,7 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu/submenu sections off.
-Version: 0.4.3
+Version: 0.5.1
 Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
@@ -11,14 +11,14 @@ License: GPLv2 or later
 
 	add_action( 'init', 'uas_init' );
  	
-	//future: impletement show only user's available menus, eg. less than admins as per suggestion
+	//future: implement show only user's available menus, eg. less than admins as per suggestion
 	
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
 		add_action( 'admin_menu', 'uas_add_admin_menu', 99 );
-  		add_action( 'admin_menu', 'uas_edit_admin_menus', 100 );  	
-        add_action( 'admin_head', 'uas_admin_js' );
-        add_action( 'admin_head', 'uas_admin_css' );
+		add_action( 'admin_init', 'uas_edit_admin_menus', 100 );
+		add_action( 'admin_head', 'uas_admin_js' );
+		add_action( 'admin_head', 'uas_admin_css' );
 		add_filter( 'plugin_action_links', 'uas_plugin_action_links', 10, 2 );
   	}
  
@@ -44,14 +44,14 @@ License: GPLv2 or later
 						$combinedname = $menuitem[5] . $subsub[2];
 						if  ( isset ( $subsub[2] ) && isset( $uas_options[ $current_user->user_login ][ $combinedname ] ) &&
 							1 == $uas_options[ $current_user->user_login ][ $combinedname ] ) {
- 								remove_submenu_page( $menuitem[2], $subsub[2] );
+							remove_submenu_page( $menuitem[2], $subsub[2] );
 						}
 					}
 				}
 			}
  		}
   	}
-	
+
 	function uas_plugin_action_links( $links, $file ) {
  		if ( $file == plugin_basename( __FILE__ ) ) {
 			$posk_links = '<a href="' . get_admin_url() . 'admin.php?page=useradminsimplifier/useradminsimplifier.php">' . esc_html__( 'Settings', 'useradminsimplifier' ) . '</a>';
@@ -60,7 +60,7 @@ License: GPLv2 or later
 		}
  		return $links;
 	}
- 	
+
 	function uas_add_admin_menu() {
          add_management_page( 	esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ), 
 								esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ), 
@@ -68,21 +68,21 @@ License: GPLv2 or later
 								'useradminsimplifier/useradminsimplifier.php',
 								'useradminsimplifier_options_page' ); 
     }
-	
+
 	function uas_get_admin_options() {
         $saved_options = get_option( 'useradminsimplifier_options' );
         return is_array( $saved_options ) ? $saved_options : array();
     }
-	
+
     function uas_save_admin_options( $uas_options ) {
          update_option( 'useradminsimplifier_options', $uas_options );
     }
-	
+
 	function uas_clean_menu_name( $menuname ) { //clean up menu names provided by WordPress
  		$menuname = preg_replace( '/<span(.*?)span>/', '', $menuname ); //strip the count appended to menus like the post count
 		return ( $menuname ); 
-	}	
-		
+	}
+
 	function useradminsimplifier_options_page() {
 		$uas_options = uas_get_admin_options();
 		$uas_selecteduser = isset( $_POST['uas_user_select'] ) ? $_POST['uas_user_select']: '';
@@ -120,19 +120,19 @@ License: GPLv2 or later
 				}
 			}
 		}
-	
+
 ?>
 <div class="wrap">
     <h2> 
 		<?php esc_html_e( 'User Admin Simplifier', 'user_admin_simplifier' ); ?>
-    </h2>
-    <form action="" method="post" id="uas_options_form" class="uas_options_form">
-      	<div class="uas_container" id="chooseauser">
-        <h3>
-        	<?php esc_html_e( 'Choose a user', 'user_admin_simplifier' ); ?>: 
-        </h3>
-        <select id="uas_user_select" name="uas_user_select" >
-        <option>
+	</h2>
+	<form action="" method="post" id="uas_options_form" class="uas_options_form">
+		<div class="uas_container" id="chooseauser">
+			<h3>
+				<?php esc_html_e( 'Choose a user', 'user_admin_simplifier' ); ?>:
+			</h3>
+			<select id="uas_user_select" name="uas_user_select" >
+				<option>
 <?php
 			$blogusers = get_users( 'orderby=nicename' );
 			foreach ( $blogusers as $user ) {
@@ -208,20 +208,18 @@ License: GPLv2 or later
 					}
 				}
 ?>
-	<input name="uas_save" type="submit" id="uas_save" value="<?php esc_html_e( 'Save Changes', 'user_admin_simplifier' ); ?>" /> <br />
-             <?php esc_html_e( 'or', 'user_admin_simplifier' ); ?>: 
- 	<input name="uas_reset" type="submit" id="uas_reset" value="<?php esc_html_e( 'Clear User Settings', 'user_admin_simplifier' ); ?>" />
-
-    </div>
- <?php
-			}
+	<input name="uas_save" type="submit" id="uas_save" value="<?php esc_attr_e( 'Save Changes', 'user_admin_simplifier' ); ?>" /> <br />
+	<?php esc_html_e( 'or', 'user_admin_simplifier' ); ?>:
+	<input name="uas_reset" type="submit" id="uas_reset" value="<?php esc_attr_e( 'Clear User Settings', 'user_admin_simplifier' ); ?>" />
+	</div>
+		        <?php
+	        }
 ?>
-   </form>
+</form>
 </div>
  <?php
 uas_save_admin_options( $uas_options );
- 	}
-    
+	}
 	 function uas_admin_js() {
 ?>
 <script type="text/javascript">
