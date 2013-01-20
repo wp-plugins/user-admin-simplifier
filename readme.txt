@@ -46,7 +46,7 @@ Bug fixes.
  
 == Changelog ==
 
-= 0.5.0 =
+= 0.5.1 =
 * Corrected issue that prevented Appearance->Editor from showing up (at all).
 
 = 0.4.3 =
