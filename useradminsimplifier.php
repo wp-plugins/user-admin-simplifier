@@ -3,7 +3,7 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu/submenu sections off.
-Version: 0.5.3
+Version: 0.5.4
 Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
@@ -32,6 +32,8 @@ License: GPLv2 or later
 		$storedsubmenu = $submenu; //store the original menu
 		$uas_options = uas_get_admin_options();
 		$newmenu = array();
+		if ( ! isset( $menu ) )
+			return false;
 		//rebuild menu based on saved options
 		foreach ( $menu as $menuitem ) {
 			if ( isset( $menuitem[5] ) && isset( $uas_options[ $current_user->user_nicename ][ $menuitem[5] ] ) &&
@@ -54,9 +56,9 @@ License: GPLv2 or later
 
 	function uas_plugin_action_links( $links, $file ) {
 		if ( $file == plugin_basename( __FILE__ ) ) {
-			$posk_links = '<a href="' . get_admin_url() . 'admin.php?page=useradminsimplifier/useradminsimplifier.php">' . esc_html__( 'Settings', 'useradminsimplifier' ) . '</a>';
+			$uas_links = '<a href="' . get_admin_url() . 'admin.php?page=useradminsimplifier/useradminsimplifier.php">' . esc_html__( 'Settings', 'useradminsimplifier' ) . '</a>';
 			// make the 'Settings' link appear first
-			array_unshift( $links, $posk_links );
+			array_unshift( $links, $uas_links );
 		}
 		return $links;
 	}
