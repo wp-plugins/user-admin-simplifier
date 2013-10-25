@@ -3,8 +3,8 @@ Contributors: adamsilverstein
 Donate link:
 Tags: admin simplify menus submenus
 Requires at least: 3.0.1
-Tested up to: 3.5.1
-Stable tag: 0.5.4
+Tested up to: 3.7
+Stable tag: 0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,9 @@ Yes! In a multisite install, User Admin Simplifier works as follows:
 * disabling menus for a user only affects current site. user's menus remain unaffected in other sites
 
 == Upgrade Notice ==
+
+= 0.6 =
+Fixes issue with removing certain submenus, use sanitize_key for all key values.
 
 = 0.5.4 =
 Corrects a bug where $menu was unset causing an error message with some themes/plugins; added sanity isset check for $menu before trying to use.
