@@ -3,7 +3,7 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu/submenu sections off.
-Version: 0.6
+Version: 0.6.1
 Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
@@ -11,7 +11,9 @@ License: GPLv2 or later
 
 	add_action( 'init', 'uas_init' );
 
-	//future: implement show only user's available menus, eg. less than admins as per suggestion
+	/**
+	 * @todo: implement show only user's available menus, eg. less than admins as per suggestion
+	 */
 
 	function uas_init() {
 		wp_enqueue_script( 'jquery' );
@@ -22,25 +24,33 @@ License: GPLv2 or later
 		add_filter( 'plugin_action_links', 'uas_plugin_action_links', 10, 2 );
 	}
 
+	/**
+	 * Remove menu items on a per user bases
+	 */
 	function uas_edit_admin_menus() {
 		global $menu;
 		global $current_user;
 		global $storedmenu;
 		global $storedsubmenu;
 		global $submenu;
-		$storedmenu = $menu; //store the original menu
-		$storedsubmenu = $submenu; //store the original menu
+
+		// Store the original menu
+		$storedmenu = $menu;
+
+		// Store the original submenu
+		$storedsubmenu = $submenu;
+
 		$uas_options = uas_get_admin_options();
 		$newmenu = array();
 		if ( ! isset( $menu ) )
-			return false;
-		//rebuild menu based on saved options
+			return;
+		// Rebuild menu based on saved options
 		foreach ( $menu as $menuitem ) {
 			if ( isset( $menuitem[5] ) && isset( $uas_options[ $current_user->user_nicename ][ sanitize_key( $menuitem[5] )  ] ) &&
 					1 == $uas_options[ $current_user->user_nicename ][ sanitize_key( $menuitem[5] )  ] ) {
 				remove_menu_page( $menuitem[2] );
 			} else {
-				// lets check the submenus
+				// Lets check the submenus
 				if ( isset ( $storedsubmenu[ $menuitem[2] ] ) ) {
 					foreach ( $storedsubmenu[ $menuitem[2] ] as $subsub ) {
 						$combinedname = sanitize_key( $menuitem[5] . $subsub[2] );
@@ -56,19 +66,26 @@ License: GPLv2 or later
 
 	function uas_plugin_action_links( $links, $file ) {
 		if ( $file == plugin_basename( __FILE__ ) ) {
-			$uas_links = '<a href="' . get_admin_url() . 'admin.php?page=useradminsimplifier/useradminsimplifier.php">' . esc_html__( 'Settings', 'useradminsimplifier' ) . '</a>';
-			// make the 'Settings' link appear first
+			$uas_links =
+				'<a href="' . get_admin_url() .
+				'admin.php?page=useradminsimplifier/useradminsimplifier.php">' .
+				esc_html__( 'Settings', 'useradminsimplifier' ) .
+				'</a>';
+
+			// Make the 'Settings' link appear first
 			array_unshift( $links, $uas_links );
 		}
 		return $links;
 	}
 
 	function uas_add_admin_menu() {
-		add_management_page( 	esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ),
-								esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ),
-								'manage_options',
-								'useradminsimplifier/useradminsimplifier.php',
-								'useradminsimplifier_options_page' );
+		add_management_page(
+			esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ),
+			esc_html__( 'User Admin Simplifier', 'useradminsimplifier' ),
+			'manage_options',
+			'useradminsimplifier/useradminsimplifier.php',
+			'useradminsimplifier_options_page'
+			);
 	}
 
 	function uas_get_admin_options() {
@@ -80,11 +97,17 @@ License: GPLv2 or later
 		update_option( 'useradminsimplifier_options', $uas_options );
 	}
 
-	function uas_clean_menu_name( $menuname ) { //clean up menu names provided by WordPress
-		$menuname = preg_replace( '/<span(.*?)span>/', '', $menuname ); //strip the count appended to menus like the post count
+	// Clean up menu names provided by WordPress
+	function uas_clean_menu_name( $menuname ) {
+		// Strip the count appended to menus like the post count
+		$menuname = preg_replace( '/<span(.*?)span>/', '', $menuname );
 		return ( $menuname );
 	}
 
+	/**
+	 * Options page for plugin
+	 * @uses global $menu, $submenu, $current user, $storedmenu, $storedsubmenu
+	 */
 	function useradminsimplifier_options_page() {
 		$uas_options = uas_get_admin_options();
 		$uas_selecteduser = isset( $_POST['uas_user_select'] ) ? $_POST['uas_user_select']: '';
@@ -92,30 +115,34 @@ License: GPLv2 or later
 		global $submenu;
 		global $current_user;
 		global $storedmenu;
+		global $storedsubmenu;
+
 		if ( !isset( $storedmenu ) ) {
 			$storedmenu = $menu;
 		}
-		global $storedsubmenu;
+
 		if ( !isset( $storedsubmenu ) ) {
 			$storedsubmenu = $submenu;
 		}
 
-		$nowselected = array (); //store selections to apply later in display loop where every menu option is iterated
+		// Store selections to apply later in display loop where every menu option is iterated
+		$nowselected = array ();
 		$menusectionsubmitted = false;
 		if ( isset( $uas_options['selecteduser'] ) && $uas_options['selecteduser'] != $uas_selecteduser ) {
-			//user was changed
+			// User was changed
 			$uas_options['selecteduser'] = $uas_selecteduser;
 		} else {
 			$uas_options['selecteduser'] = $uas_selecteduser;
-			// process submitted menu selections
+			// Process submitted menu selections
 			if ( isset ( $_POST['uas_reset'] ) ) {
-				//reset options for this user by clearing all their options
+				// Reset options for this user by clearing all their options
 				unset ( $uas_options[ $uas_selecteduser ] );
 			} else {
 				if ( isset ( $_POST['menuselection'] ) && is_array( $_POST['menuselection'] ) ) {
 					$menusectionsubmitted = true;
 					foreach ( $_POST['menuselection'] as $key => $value ) {
-						$nowselected[ $uas_selecteduser ][ $value ] = 1; //disable this menu for this user
+						// Disable this menu for this user
+						$nowselected[ $uas_selecteduser ][ $value ] = 1;
 					}
 				}
 			}
