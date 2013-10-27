@@ -53,6 +53,12 @@ Bug fixes, last update broke plugin for some users; also fixed issue with user_l
 
 == Changelog ==
 
+= 0.6 =
+Fixes issue with removing certain submenus, use sanitize_key for all key values.
+
+= 0.5.4 =
+Corrects a bug where $menu was unset causing an error message with some themes/plugins; added sanity isset check for $menu before trying to use.
+
 = 0.5.3 =
 Bug fixes, last update broke plugin for some users; also fixed issue with user_login used in one spot, user_nicename used in another. Code cleanup.
 
@@ -87,4 +93,3 @@ Bug fix.
 
 = 0.23 =
 * initial release.
-
