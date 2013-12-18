@@ -3,7 +3,7 @@
 Plugin Name: User Admin Simplifier
 Plugin URI: http://www.earthbound.com/plugins/user-admin-simplifier
 Description: Lets any Administrator simplify the WordPress Admin interface, on a per-user basis, by turning specific menu/submenu sections off.
-Version: 0.6
+Version: 0.6.1
 Author: Adam Silverstein
 Author URI: http://www.earthbound.com/plugins
 License: GPLv2 or later
@@ -179,7 +179,7 @@ License: GPLv2 or later
 						if ( !( strpos( $menuitem[0], 'pending-count' ) ) ) { //top level menu items with pending count span don't have submenus
 							$topmenu = $menuitem[2];
 							if ( isset( $storedsubmenu[ $topmenu] ) ) { //display submenus
-								echo ( '<div class="submenu unselected"><a href="javascript:;">'. esc_html__( 'Show submenus', 'user_admin_simplifier' ) . '</a></div><div class="submenuinner">' );
+								echo ( '<div class="submenu uas-unselected"><a href="javascript:;">'. esc_html__( 'Show submenus', 'user_admin_simplifier' ) . '</a></div><div class="submenuinner">' );
 								$subrowcount = 0;
 								foreach ( $storedsubmenu[ $topmenu] as $subsub ) {
 									$combinedname = sanitize_key( $menuitem[5] . $subsub[2] );
@@ -235,11 +235,11 @@ uas_save_admin_options( $uas_options );
 			inner=jQuery( this ).next( '.submenuinner' );
 			if ( jQuery( inner ).is( ":hidden" ) ) {
 				jQuery( inner ).show().slideDown( 'fast' );
-				jQuery( this ).removeClass( 'unselected' ).addClass( 'selected' );
+				jQuery( this ).removeClass( 'uas-unselected' ).addClass( 'uas_selected' );
 				jQuery( this ).children( 'a' ).text( '<?php esc_html_e( 'Hide submenus', 'user_admin_simplifier' )?>' );
 			} else {
 				jQuery( inner ).slideUp( 'fast' ).hide();
-				jQuery( this ).removeClass( 'selected' ).addClass( 'unselected' );
+				jQuery( this ).removeClass( 'uas_selected' ).addClass( 'uas-unselected' );
 				jQuery( this ).children( 'a' ).text( '<?php esc_html_e( 'Show submenus', 'user_admin_simplifier' )?>' );
 
 			}
@@ -252,11 +252,11 @@ uas_save_admin_options( $uas_options );
 ?>
 <style type="text/css">
 
-	.unselected {
+	.uas-unselected {
 		background-image:url( <?php echo ( plugins_url( 'images/plus15.png', __FILE__ ) ); ?> );
 	}
 
-	.selected {
+	.uas_selected {
 		background-image:url( <?php echo ( plugins_url( 'images/minus15.png', __FILE__ ) ); ?> );
 	}
 
@@ -295,6 +295,7 @@ uas_save_admin_options( $uas_options );
 		min-width:200px;
 		padding:5px;
 		font-size:16px;
+		height: 34px;
 	}
 
 	#choosemenus {
