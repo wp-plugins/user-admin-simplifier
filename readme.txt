@@ -39,22 +39,15 @@ Yes! In a multisite install, User Admin Simplifier works as follows:
 = 0.6.1 =
 Make css class for +/- more specific to avoid conflicts.
 
-= 0.6 =
-Fixes issue with removing certain submenus, use sanitize_key for all key values.
-
-= 0.5.4 =
-Corrects a bug where $menu was unset causing an error message with some themes/plugins; added sanity isset check for $menu before trying to use.
-
-= 0.5.3 =
-Bug fixes, last update broke plugin for some users; also fixed issue with user_login used in one spot, user_nicename used in another. Code cleanup.
-
-
 == Screenshots ==
 
 1. Choose a user to edit their menus
 2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for the selected user.
 
 == Changelog ==
+
+= 0.6.1 =
+Make css class for +/- more specific to avoid conflicts.
 
 = 0.6 =
 Fixes issue with removing certain submenus, use sanitize_key for all key values.
