@@ -3,8 +3,8 @@ Contributors: adamsilverstein
 Donate link:
 Tags: admin simplify menus submenus
 Requires at least: 3.0.1
-Tested up to: 3.9.1
-Stable tag: 0.6.2
+Tested up to: 4.0.0
+Stable tag: 0.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,11 @@ Yes! In a multisite install, User Admin Simplifier works as follows:
 
 == Upgrade Notice ==
 
+= 0.6.3 =
+Tested up to WordPress 4.0.0.
+Added icons for WordPress 4.0 plugin installer.
+
+
 = 0.6.2 =
 Tested up to WordPress 3.9.1.
 
@@ -48,6 +53,10 @@ Make css class for +/- more specific to avoid conflicts.
 2. Check the menu section to disable. Click 'Save Changes' to apply your settings. Click 'Clear User Settings' to reset the disabled menus for the selected user.
 
 == Changelog ==
+
+= 0.6.3 =
+Add icons for 4.0 plugin browser.
+Tested up to WordPress 4.0.
 
 = 0.6.2 =
 Tested up to WordPress 3.9.1.
