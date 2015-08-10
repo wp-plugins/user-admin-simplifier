@@ -4,7 +4,7 @@ Donate link:
 Tags: admin simplify menus submenus
 Requires at least: 3.0.1
 Tested up to: 4.3.0
-Stable tag: 0.6.3
+Stable tag: 0.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,9 @@ Yes! In a multisite install, User Admin Simplifier works as follows:
 * disabling menus for a user only affects current site. user's menus remain unaffected in other sites
 
 == Upgrade Notice ==
+
+= 0.6.4 =
+Tested up to WordPress 4.3.0.
 
 = 0.6.3 =
 Tested up to WordPress 4.0.0.
