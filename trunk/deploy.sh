@@ -68,17 +68,17 @@ js/src
 Gruntfile.js
 plugin-for-release
 node_modules
-Makefile" "$SVNPATH/trunk/"
+Makefile" "$SVNPATH/"
 
 echo "Changing directory to SVN and committing to trunk"
-cd $SVNPATH/trunk/
+cd $SVNPATH/
 # Add all new files that are not set to be ignored
 svn status | grep -v "^.[ \t]*\..*" | grep "^?" | awk '{print $2}' | xargs svn add
 svn commit --username=$SVNUSER -m "$COMMITMSG"
 
 # echo "Creating new SVN tag & committing it"
 cd $SVNPATH
-svn copy trunk/ tags/$NEWVERSION1/
+svn copy / tags/$NEWVERSION1/
 cd $SVNPATH/tags/$NEWVERSION1
 svn commit --username=$SVNUSER -m "Tag $NEWVERSION1"
 
